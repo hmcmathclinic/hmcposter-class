@@ -75,12 +75,13 @@
 \setlength{\columnseprule}{2pt}
 
 
-%% Set some dimensions for layout.
+%% Set some dimensions for thesis and clinic layouts.
+\if@thesis
 \RequirePackage[
 centering,
-paperwidth=36in,
-paperheight=48in,
-top=1.75in,
+paperwidth=48in,
+paperheight=36in,
+top=0.5in,
 left=1.75in,
 right=1.75in,
 bottom=2in,
@@ -91,7 +92,25 @@ marginparsep=0in,
 includehead,
 includefoot,
 ]{geometry}
+\fi
 
+\if@clinic
+\RequirePackage[
+centering,
+paperwidth=36in,
+paperheight=48in,
+top=0.5in,
+left=1.75in,
+right=1.75in,
+bottom=2in,
+headsep=0.5in,
+footskip=0.5in,
+marginparwidth=0in,
+marginparsep=0in,
+includehead,
+includefoot,
+]{geometry}
+\fi
 
 %% Set some additional layout parameters.
 
@@ -100,7 +119,7 @@ includefoot,
 % Headers and footers.
 \if@clinic
 \geometry{%
-headheight=5.6in,
+headheight=6.0in,
 headsep=0.5in,
 footskip=1in,
 }
@@ -226,7 +245,7 @@ footskip=1in,
 \fancyhead[C]{%
   \begin{center}
     {\color{black}\Large\textsf{\@class}\\}%
-    {\color{hmcorange}\fontsize{100pt}{120pt}\selectfont\textsf{\textbf{\@title}}\\[0.25em]}
+    {\color{hmcorange}\fontsize{100pt}{100pt}\selectfont\textsf{\textbf{\@title}}\\[0.25em]}
     {\color{black}\Large\textsf{\@author}\\[-0.5em]}
   \end{center}
 }
@@ -292,26 +311,30 @@ footskip=1in,
 %%% future versions of multicol.sty, so be sure to check there.
 
 \renewcommand{\page@sofar}{%
-   \process@cols\mult@rightbox
-       {\ifvoid\count@
-          \setbox\count@\hbox to\hsize{}%
-        \else
-          \wd\count@\hsize
-        \fi}%
-   \mult@info\z@
-    {Column spec:\MessageBreak
-       (\the\multicol@leftmargin\space -->
-        \the\full@width\space = \the\hsize
-        \space x \the\col@number)%
-     }%
-\ifvmode\else\errmessage{Multicol Error}\fi
-   \moveright\multicol@leftmargin
-    \hbox to\full@width{%
-     \process@cols\mult@gfirstbox{\box\count@
-       \hss{\color{\@rulecolor}\vrule\@width\columnseprule}\hss}%
-     \box\mult@rightbox
-      \rlap{\phantom p}%
-    }%
+		\process@cols\mult@rightbox
+		{\ifvoid\count@
+			\setbox\count@\hbox to\hsize{}%
+			\else
+			\wd\count@\hsize
+			\fi}%
+		\count@\col@number \advance\count@\m@ne
+		\mult@info\z@
+		{Column spec: \the\full@width\space = indent
+			+ columns + sep =\MessageBreak
+			\the\multicol@leftmargin\space
+			+ \the\col@number\space
+			x \the\hsize\space
+			+ \the\count@\space
+			x \the\columnsep
+		}%
+		\ifvmode\else\errmessage{Multicol Error}\fi
+		\nointerlineskip
+		\setbox\z@\hbox{p}\global\dimen\tw@\dp\z@
+		\moveright\multicol@leftmargin
+		\hbox to\full@width{%
+			\mc@align@columns
+			\rlap{\phantom p}%
+		}%
 }
 %%% End code from multicol.sty.
 
@@ -323,7 +346,7 @@ footskip=1in,
 \raggedright
 \thispagestyle{fancy}
 %{\color{hmcorange}\rule{\textwidth}{2pt}}
-\begin{multicols*}{2}
+\begin{multicols*}{3}
 }%
 {\end{multicols*}
 }
